@@ -1,12 +1,7 @@
 require 'securerandom'
 
-remote_file "/etc/apt/sources.list.d/elastic-5.x.list" do
-  source "files/elastic/elastic-5.x.list"
-end
-
-remote_file "/etc/apt/sources.list.d/thehive-project.list" do
-  source "files/thehive/thehive-project.list"
-end
+remote_file "/etc/apt/sources.list.d/elastic-5.x.list"
+remote_file "/etc/apt/sources.list.d/thehive-project.list"
 
 # install jvm
 execute "sudo add-apt-repository -y ppa:openjdk-r/ppa"
@@ -19,9 +14,7 @@ execute "sudo apt install -y apt-transport-https"
 execute "sudo apt-get update"
 package "elasticsearch"
 
-remote_file "/etc/elasticsearch/elasticsearch.yml" do
-  source "files/elastic/elasticsearch.yml"
-end
+remote_file "/etc/elasticsearch/elasticsearch.yml"
 
 # install thehive & cortex
 execute "sudo apt-key adv --keyserver hkp://pgp.mit.edu --recv-key 562CBC1C"
@@ -30,16 +23,12 @@ package "thehive"
 package "cortex"
 
 template "/etc/thehive/application.conf" do
-  source "templates/thehive/application.conf"
   variables(secret: SecureRandom.hex)
 end
 
-remote_file "/usr/lib/systemd/system/thehive.service" do
-  source "files/thehive/thehive.service"
-end
+remote_file "/usr/lib/systemd/system/thehive.service"
 
 template "/etc/cortex/application.conf" do
-  source "templates/cortex/application.conf"
   variables(secret: SecureRandom.hex)
 end
 
