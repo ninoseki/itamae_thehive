@@ -18,5 +18,6 @@ After running this itamae script, TheHive/Cortex/Elasticsearch work on these por
 
 ## Notes
 
-- [Cortex-Analyzers](https://github.com/TheHive-Project/Cortex-Analyzers) is installed to `/opt/cortex/Cortex-Analyzers`.
 - This itamae script supports only Ubuntu 16.04 LTS.
+- [Cortex-Analyzers](https://github.com/TheHive-Project/Cortex-Analyzers) is installed to `/opt/cortex/Cortex-Analyzers`.
+- You need to upload a report template of Cortex manually. Please refer to `6. Cortex` of [TheHiveDocs/admin/configuration.md](https://github.com/TheHive-Project/TheHiveDocs/blob/master/admin/configuration.md#6-cortex)
