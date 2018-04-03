@@ -13,7 +13,7 @@ $ itamae ssh cookbooks/hive/default.rb
 After running this itamae script, TheHive/Cortex/Elasticsearch work on these ports.
 
 - TheHive: `8080/tcp`
-- Cortex: `9000/tcp`
+- Cortex: `9001/tcp`
 - Elasticsearch: `9300/tcp`
 
 ## Notes
