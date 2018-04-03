@@ -17,7 +17,7 @@ package "elasticsearch"
 remote_file "/etc/elasticsearch/elasticsearch.yml"
 
 # install thehive & cortex
-execute "sudo apt-key adv --keyserver hkp://pgp.mit.edu --recv-key 562CBC1C"
+execute "curl https://raw.githubusercontent.com/TheHive-Project/Cortex/master/PGP-PUBLIC-KEY | sudo apt-key add -"
 execute "sudo apt-get update"
 package "thehive"
 package "cortex"
