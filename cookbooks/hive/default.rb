@@ -17,7 +17,7 @@ package "elasticsearch"
 remote_file "/etc/elasticsearch/elasticsearch.yml"
 
 # install thehive & cortex
-execute "curl https://raw.githubusercontent.com/TheHive-Project/Cortex/master/PGP-PUBLIC-KEY | sudo apt-key add -"
+execute "sudo apt-key adv --keyserver hkp://pgp.mit.edu --recv-key 562CBC1C"
 execute "sudo apt-get update"
 package "thehive"
 package "cortex"
@@ -33,17 +33,20 @@ template "/etc/cortex/application.conf" do
 end
 
 # install cortex analyzers
-"git python-pip python2.7-dev ssdeep libfuzzy-dev libfuzzy2 libimage-exiftool-perl libmagic1 build-essential libssl-dev".split.each do |name|
+"python-pip python2.7-dev python3-pip python3-dev ssdeep libfuzzy-dev libfuzzy2 libimage-exiftool-perl libmagic1 build-essential git libssl-dev".split.each do |name|
   package name
 end
+
+execute "sudo pip install -U pip setuptools && sudo pip3 install -U pip setuptools"
 
 git "/opt/cortex/Cortex-Analyzers" do
   repository "https://github.com/CERT-BDF/Cortex-Analyzers"
 end
 
 execute "install analyzers" do
-  cwd "/opt/cortex/Cortex-Analyzers/analyzers"
-  command "sudo pip install $(sort -u */requirements.txt)"
+  cwd "/opt/cortex/"
+  command "for I in $(find Cortex-Analyzers -name 'requirements.txt'); do sudo -H pip2 install -r $I; done"
+  command "for I in $(find Cortex-Analyzers -name 'requirements.txt'); do sudo -H pip3 install -r $I || true; done"
 end
 
 # set proper user:group
