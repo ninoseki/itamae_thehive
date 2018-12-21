@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 
 remote_file "/etc/apt/sources.list.d/elastic-5.x.list"
 remote_file "/etc/apt/sources.list.d/thehive-project.list"
@@ -26,8 +26,6 @@ template "/etc/thehive/application.conf" do
   variables(secret: SecureRandom.hex)
 end
 
-remote_file "/usr/lib/systemd/system/thehive.service"
-
 template "/etc/cortex/application.conf" do
   variables(secret: SecureRandom.hex)
 end
@@ -45,8 +43,8 @@ end
 
 execute "install analyzers" do
   cwd "/opt/cortex/"
-  command "for I in $(find Cortex-Analyzers -name 'requirements.txt'); do sudo -H pip2 install -r $I; done"
-  command "for I in $(find Cortex-Analyzers -name 'requirements.txt'); do sudo -H pip3 install -r $I || true; done"
+  command 'for I in $(find Cortex-Analyzers -name "requirements.txt"); do sudo -H pip2 install -r $I; done'
+  command 'for I in $(find Cortex-Analyzers -name "requirements.txt"); do sudo -H pip3 install -r $I || true; done'
 end
 
 # set proper user:group
@@ -57,7 +55,7 @@ execute "sudo chown -R cortex:cortex /etc/cortex"
 execute "sudo chown -R cortex:cortex /opt/cortex"
 
 execute "sudo systemctl daemon-reload"
-["elasticsearch", "cortex", "thehive"].each do |name|
+%w[elasticsearch cortex thehive].each do |name|
   execute "sudo systemctl enable #{name}"
   execute "sudo systemctl start #{name}"
 end
