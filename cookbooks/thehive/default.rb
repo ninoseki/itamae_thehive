@@ -26,8 +26,6 @@ template "/etc/thehive/application.conf" do
   variables(secret: SecureRandom.hex)
 end
 
-remote_file "/usr/lib/systemd/system/thehive.service"
-
 template "/etc/cortex/application.conf" do
   variables(secret: SecureRandom.hex)
 end
