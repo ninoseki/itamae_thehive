@@ -29,27 +29,30 @@ $ itamae ssh --host x.x.x.x cookbooks/thehive/default.rb
 
 After running the itamae recipe, TheHive / Cortex / Elasticsearch work on following ports.
 
-- TheHive: `8080/tcp`
+- TheHive: `9000/tcp`
 - Cortex: `9001/tcp`
 - Elasticsearch: `9300/tcp`
 
 ## Configuration
 
-### Cortex API key for TheHive
+### Setting up Cortex
 
-You need to create a Cortex account for TheHive and set its API key in `/etc/thehive/application.conf` manually.
+Go to `http://YOUR_SERVER_ADDRESS:9001` and follow instructions of [the official guide](https://github.com/TheHive-Project/CortexDocs/blob/master/admin/quick-start.md#step-2-update-the-database).
+
+### Setting up TheHive
+
+You need to set your Cortex API key in `/etc/thehive/application.conf`.
 
 ```
 cortex {
   "CORTEX-SERVER-ID" {
     url = "http://localhost:9001"
     key = "YOUR_API_KEY"
+  }
 }
 ```
 
-## Report templates
-
-You need to upload report templates of Cortex manually. Please refer to `6. Cortex` of [TheHiveDocs/admin/configuration.md](https://github.com/TheHive-Project/TheHiveDocs/blob/master/admin/configuration.md#6-cortex)
+And then go to `http://YOUR_SERVER_ADDRESS:9000` and follow instructions of [the official guide](https://github.com/TheHive-Project/TheHiveDocs/blob/master/installation/install-guide.md#5-first-start).
 
 ## Notes
 
