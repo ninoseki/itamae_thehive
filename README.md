@@ -6,16 +6,17 @@ Automated installation of [TheHive](https://github.com/TheHive-Project/TheHive) 
 
 ## Supported versions
 
-- OS: `Ubuntu 16.04 LTS`
-- TheHive: `3.2.1`
-- Cortex: `2.1.3`
+- OS: `Ubuntu 18.04 LTS`
+- TheHive: `3.4.0`
+- Cortex: `3.0.0`
+- Elasticsearch: `6.8.3`
 
 ## Prerequisite
 
 Please install itamae beforehand.
 
 ```bash
-$ gem install itamae
+gem install itamae
 ```
 
 ## How to use
@@ -31,7 +32,7 @@ After running the itamae recipe, TheHive / Cortex / Elasticsearch work on follow
 
 - TheHive: `9000/tcp`
 - Cortex: `9001/tcp`
-- Elasticsearch: `9300/tcp`
+- Elasticsearch: `9200/tcp`
 
 ## Configuration
 
@@ -46,13 +47,19 @@ You need to set your Cortex API key in `/etc/thehive/application.conf`.
 ```
 cortex {
   "CORTEX-SERVER-ID" {
-    url = "http://localhost:9001"
+    url = "http://localhost:9001",
     key = "YOUR_API_KEY"
   }
 }
 ```
 
-And then go to `http://YOUR_SERVER_ADDRESS:9000` and follow instructions of [the official guide](https://github.com/TheHive-Project/TheHiveDocs/blob/master/installation/install-guide.md#5-first-start).
+You have to restart the service before starting setup.
+
+```bash
+sudo systemctl restart thehive
+```
+
+Then go to `http://YOUR_SERVER_ADDRESS:9000` and follow instructions of [the official guide](https://github.com/TheHive-Project/TheHiveDocs/blob/master/installation/install-guide.md#5-first-start).
 
 ## Notes
 

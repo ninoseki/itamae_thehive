@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -6,7 +8,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "ubuntu/bionic64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -19,7 +21,15 @@ Vagrant.configure("2") do |config|
   # NOTE: This will enable public access to the opened port
   config.vm.network "forwarded_port", guest: 9000, host: 9000
   config.vm.network "forwarded_port", guest: 9001, host: 9001
-  config.vm.network "forwarded_port", guest: 9300, host: 9300
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
+
+  http_proxy = ENV["HTTP_PROXY"] || ENV["http_proxy"]
+  https_proxy = ENV["HTTPS_PROXY"] || ENV["https_proxy"]
+  if Vagrant.has_plugin?("vagrant-proxyconf") && (http_proxy || https_proxy)
+    config.proxy.http     = http_proxy
+    config.proxy.https    = https_proxy
+    config.proxy.no_proxy = "localhost,127.0.0.1"
+  end
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
