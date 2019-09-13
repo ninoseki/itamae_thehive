@@ -2,27 +2,54 @@
 
 require "securerandom"
 
-remote_file "/etc/apt/sources.list.d/elastic-5.x.list"
+ELASTICSEARCH_VERSION = "6.8.3"
+ELASTICSEARCH_MAJOR_VERSION = ELASTICSEARCH_VERSION.split(".").first
+THEHIVE_VERSION = "3.4.0-1"
+CORTEX_VERSION = "3.0.0-1"
+JAVA_VERSION = "11"
+JAVA_HOME = "/usr/lib/jvm/java-#{JAVA_VERSION}-openjdk-amd64/bin/"
+
+execute "curl https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -" do
+  not_if "apt-key list | grep Elasticsearch"
+end
+execute "curl https://raw.githubusercontent.com/TheHive-Project/TheHive/master/PGP-PUBLIC-KEY | sudo apt-key add -" do
+  not_if "apt-key list | grep TheHive"
+end
+
+remote_file "/etc/apt/sources.list.d/elastic-#{ELASTICSEARCH_MAJOR_VERSION}.x.list"
 remote_file "/etc/apt/sources.list.d/thehive-project.list"
 
-# install jvm
-execute "sudo add-apt-repository -y ppa:openjdk-r/ppa"
-execute "sudo apt-get update"
-package "openjdk-8-jre-headless"
-
-# install elasticsearch
-execute "sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key D88E42B4"
 execute "sudo apt install -y apt-transport-https"
 execute "sudo apt-get update"
-package "elasticsearch"
+package "openjdk-#{JAVA_VERSION}-jre-headless"
+
+# install elasticsearch
+package "elasticsearch" do
+  version ELASTICSEARCH_VERSION
+end
 
 remote_file "/etc/elasticsearch/elasticsearch.yml"
 
+file "/etc/environment" do
+  action :edit
+  block do |content|
+    unless content =~ /^JAVA_HOME/
+      content << "JAVA_HOME=\"#{JAVA_HOME}\"\n"
+    end
+  end
+end
+
+execute "JAVA_HOME=#{JAVA_HOME}" do
+  not_if "echo $JAVA_HOME | grep openjdk"
+end
+
 # install thehive & cortex
-execute "curl https://raw.githubusercontent.com/TheHive-Project/TheHive/master/PGP-PUBLIC-KEY | sudo apt-key add -"
-execute "sudo apt-get update"
-package "thehive"
-package "cortex"
+package "thehive" do
+  version THEHIVE_VERSION
+end
+package "cortex" do
+  version CORTEX_VERSION
+end
 
 template "/etc/thehive/application.conf" do
   variables(secret: SecureRandom.hex)
@@ -51,11 +78,13 @@ end
 
 # set proper user:group
 execute "sudo chown -R elasticsearch:elasticsearch /etc/elasticsearch/"
+execute "sudo chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/"
 execute "sudo chown -R thehive:thehive /etc/thehive"
 execute "sudo chown -R thehive:thehive /opt/thehive"
 execute "sudo chown -R cortex:cortex /etc/cortex"
 execute "sudo chown -R cortex:cortex /opt/cortex"
 
+# enable services
 execute "sudo systemctl daemon-reload"
 %w[elasticsearch cortex thehive].each do |name|
   execute "sudo systemctl enable #{name}"
